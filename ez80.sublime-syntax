@@ -1,0 +1,59 @@
+%YAML 1.2
+---
+name: ez80
+file_extensions: [asm, ez80]
+scope: source.ez80
+
+contexts:
+  main:
+    - match: \b(adc|add|and|bit|call|ccf|cp|cpd|cpdr|cpi|cpir|cpl|daa|dec|di|djnz|ei|ex|exx|halt|im|inc|jp|jq|jr|ld|ldd|lddr|ldi|ldir|lea|mlt|neg|nop|or|pea|pop|push|res|ret|reti|retn|rl|rla|rlc|rlca|rld|rr|rra|rrc|rrca|rrd|rsmix|rst|sbc|scf|set|sla|slp|sra|srl|stmix|sub|tst|xor|in|in0|ind|ind2|ind2r|indm|indmr|indr|indrx|ini|ini2|ini2r|inim|inimr|inir|inirx|otdm|otdmr|otdrx|otim|otimr|otirx|out|out0|outd|outd2|outd2r|outdr|outi|outi2|outi2r|outir|tstio)\b
+      scope: keyword.control.ez80
+    - match: '(macro)'
+      scope: keyword.control.ez80
+    - match: \b\w+(?=\:)\b
+#      scope: entity.name.label.ez80
+      scope: entity.name.function.ez80
+    - match: \b(a|af|b|bc|c|d|de|e|h|hl|i|ix|iy|l|r|sp)\b
+      scope: variable.parameter.register.ez80
+    - match: 'include|library|include_library'
+      scope: keyword.control.import
+    - match: \b[0-9]+\b
+      scope: constant.numeric.integer.decimal.ez80
+    - match: '\$[0-9|a-f|A-F]+'
+      scope: constant.numeric.integer.hexadecimal.ez80
+    - match: '(\+|-|\*|\/)'
+      scope: keyword.operator.arithmetic.ez80
+    - match: '(,|:)'
+      scope: punctuation.separator
+    - match: '\.'
+      scope: punctuation.accessor
+    - match: '\('
+      push: parenthesis
+      scope: punctuation.section.group.begin.ez80
+    - match: '\)'
+      scope: invalid.illegal.stray-bracket-end.ez80
+    - match: \b(db|dw|dl|rb|rw|rl)\b
+      scope: storage.type
+    - match: ';'
+      scope: punctuation.definition.comment
+      push: comment.line
+    - match: "'"
+      push: string
+
+  string:
+    - meta_scope: string.quoted.single.ez80
+    - match: \\.
+      scope: constant.character.escape.ez80
+    - match: "'"
+      pop: true
+
+  comment.line:
+    - meta_scope: comment.line.ez80
+    - match: '\n'
+      pop: true
+
+  parenthesis:
+    - match: \)
+      scope: punctuation.section.group.end.ez80
+      pop: true
+    - include: main
