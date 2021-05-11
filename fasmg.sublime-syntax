@@ -1,0 +1,275 @@
+%YAML 1.2
+---
+name: fasmg
+file_extensions: [asm]
+scope: source.fasmg
+
+variables:
+  # a{0} since I'm too lazy to properly escape stuff
+  name: a{0}[^\+-\/\*=<>\(\)\[\]{}:\?!,\|&~`\\\s\d"'$][^\+-\/\*=<>\(\)\[\]{}:\?!,\|&~`\\\s]*\??
+  identifier: a{0}[^\+-\/\*=<>\(\)\[\]{}:\?!,.\|&~`\\\s\d"'$][^\+-\/\*=<>\(\)\[\]{}:\?!,.\|&~`\\\s]*
+
+contexts:
+  prototype:
+    - match: ;
+      scope: punctuation.definition.comment.fasmg
+      set: comment.line
+
+  main:
+    - match: \?
+      scope: punctuation.definition.variable.fasmg
+      push: name
+    - match: end # todo: match name?
+      scope: keyword.other.fasmg
+      push: end
+    - match: if
+      scope: keyword.control.conditional.fasmg
+      push: logical_expression
+    - match: else
+      scope: keyword.control.conditional.fasmg
+    - match: assert
+      scope: keyword.other.fasmg
+      push: logical_expression
+    - match: (macro)[ \t]+({{name}})?
+      captures:
+        1: keyword.declaration.macro.fasmg
+        2: entity.name.macro.fasmg
+      push: rvalue # todo: arguments
+    - match: (struc)[ \t]+({{name}})?
+      captures:
+        1: keyword.declaration.struct.fasmg
+        2: entity.name.struct.fasmg
+      push: rvalue # todo: arguments
+    - match: local
+      scope: storage.modifier.local.fasmg
+      push: rvalue # todo: handle name list better
+    - match: esc
+      scope: keyword.other.fasmg
+    - match: mvmacro|mvstruc
+      scope: keyword.other.fasmg
+      push: rvalue
+    - match: (namespace)[ \t]+({{name}})?
+      captures:
+        1: keyword.declaration.namespace.fasmg
+        2: entity.name.namespace.fasmg
+      push: empty_line
+    - match: (restore)[ \t]+({{name}})?
+      captures:
+        1: keyword.other.fasmg
+        2: variable.other.fasmg
+      push: empty_line
+    - match: (purge|restruc)[ \t]+({{name}})?
+      captures:
+        1: keyword.other.fasmg
+        2: variable.function.fasmg
+      push: empty_line
+    - match: label
+      scope: keyword.declaration.label.fasmg
+      push: label
+    - match: '(element)[ \t]+({{name}})[ \t]*(:)?[ \t]*'
+      captures:
+        1: keyword.declaration.variable.fasmg
+        2: variable.other.fasmg
+        3: punctuation.separator.fasmg
+      set: rvalue
+    - match: '((re)?define)[ \t]+({{name}})?'
+      captures:
+        1: keyword.declaration.variable.fasmg
+        3: variable.other.fasmg
+      set: rvalue
+    - match: repeat|rept|iterate|irpv?
+      scope: keyword.control.fasmg
+      set: rvalue
+    - match: while
+      scope: keyword.control.fasmg
+      push: logical_expression
+    - match: break|postpone
+      scope: keyword.control.fasmg
+      push: empty_line
+    - match: indx
+      scope: keyword.control.fasmg
+      push: rvalue
+    - match: outscope
+      scope: keyword.other.fasmg
+    - match: (r(aw)?)?match
+      scope: keyword.control.conditional.fasmg
+      push: rvalue
+    - match: org|section|restartout
+      scope: keyword.other.fasmg
+      push: rvalue
+    - match: (virtual)([ \t]+(at))?
+      captures:
+        1: keyword.control.fasmg
+        3: keyword.other.fasmg
+      push: rvalue
+    - match: load|store|eval|display|err|format|(retain|remove)comments|isolatelines
+      scope: keyword.other.fasmg
+      push: rvalue
+    - match: include
+      scope: keyword.control.import.fasmg
+      push: rvalue
+    - include: name
+    - match: '{{identifier}}'
+      scope: temp # todo
+      # todo: ? in front of a label / variable
+      push: rvalue    
+
+  empty_line:
+    - match: \s*\n
+      pop: true
+    - match: .*
+      scope: invalid.illegal.fasmg
+
+  name:
+    - match: '({{name}})\s*(=:?|(re)?equ)\s*'
+      captures:
+        1: variable.other.fasmg
+        2: keyword.operator.assignment.fasmg
+      set: rvalue
+    - match: '({{name}})\s*(:=)\s*'
+      captures:
+        1: variable.other.constant.fasmg
+        2: keyword.operator.assignment.fasmg
+      set: rvalue
+    - match: '({{name}})\s*(:{1,2})\s*'
+      captures:
+        1: entity.name.label.fasmg
+        2: punctuation.separator.fasmg
+      set: main
+    - match: '(({{name}})?[ \t]+)?([dr](d?q{1,2}|[bwdpt])|dbx)\b'
+      captures:
+        2: entity.name.label.fasmg
+        3: storage.type.fasmg
+      set: rvalue
+    - match: '({{name}})?[ \t]*(emit)'
+      captures:
+        1: entity.name.label.fasmg
+        2: keyword.other.fasmg
+      set: rvalue
+    - match: '({{name}})?[ \t]*(file)'
+      captures:
+        1: entity.name.label.fasmg
+        2: keyword.control.import.fasmg
+      set: rvalue
+    # todo: tag ? properly
+    # todo: tag . as punctuation.accessor.fasmg
+    # todo: calminstructions
+
+  rvalue:
+    - match: \+|-|\*|/|mod
+      scope: keyword.operator.arithmetic.fasmg
+    - match: xor|and|or|shl|shr|not|bsf|bsr
+      scope: keyword.operator.bitwise.fasmg
+    - match: (bswap|string|lengthof|sizeof|float|trunc|dup)|(elements?|scale|metadata)(of)?
+      scope: keyword.operator.word.fasmg
+    - match: t?byte|d?q{0,2}[fptxyz]?word
+      scope: storage.type.fasmg
+    - match: '%'
+      scope: variable.parameter.fasmg
+    - match: __(time|file|line|source)__
+      scope: variable.language.fasmg
+    - match: from|at
+      scope: keyword.other.fasmg
+    - match: '{{name}}'
+      scope: variable.other.fasmg
+    - match: \'
+      scope: punctuation.definition.string.begin.fasmg
+      push: string.single
+    - match: \"
+      scope: punctuation.definition.string.begin.fasmg
+      push: string.double
+    - match: \d+(\.(\d+e)?|e)\d+f?
+      scope: constant.numeric.float.decimal.fasmg
+    - match: \b[01]+b\b
+      scope: constant.numeric.integer.binary.fasmg
+    - match: \b[0-7]+[oq]\b
+      scope: constant.numeric.integer.octal.fasmg
+    - match: \b\d+d?\b
+      scope: constant.numeric.integer.decimal.fasmg
+    - match: \b0x\h+|\$\h+|\d\h*h\b
+      scope: constant.numeric.integer.hexadecimal.fasmg
+    - match: \d+f
+      scope: constant.numeric.float.decimal.fasmg
+    - match: \$(@|%{0,2})
+      scope: variable.language.fasmg
+    - match: ','
+      scope: punctuation.separator.fasmg
+    - match: (\\)\n
+      captures:
+        1: punctuation.separator.continuation.fasmg
+    - match: \n
+      pop: true
+      
+
+  comment.line:
+    - meta_include_prototype: false
+    - meta_scope: comment.line.fasmg
+    - match: '\n'
+      pop: true
+
+  string.single:
+    - meta_include_prototype: false
+    - meta_scope: string.quoted.single.fasmg
+    - match: \'\'
+      scope: constant.character.escape.fasmg
+    - match: \'
+      scope: punctuation.definition.string.end.fasmg
+      pop: true
+    - match: \n
+      scope: invalid.illegal.fasmg
+      pop: true
+
+  string.double:
+    - meta_include_prototype: false
+    - meta_scope: string.quoted.double.fasmg
+    - match: \"\"
+      scope: constant.character.escape.fasmg
+    - match: \"
+      scope: punctuation.definition.string.end.fasmg
+      pop: true
+    - match: \n
+      scope: invalid.illegal.fasmg
+      pop: true
+
+  end:
+    - match: namespace
+      scope: keyword.declaration.namespace.fasmg
+      set: empty_line
+    - match: if|(r(aw)?)?match
+      scope: keyword.control.conditional.fasmg
+      set: empty_line
+    - match: macro
+      scope: keyword.declaration.macro.fasmg
+      set: empty_line
+    - match: struc
+      scope: keyword.declaration.struct.fasmg
+      set: empty_line
+    - match: repeat|rept|while|iterate|irpv?|postpone|virtual|calminstruction
+      scope: keyword.control.fasmg
+      set: empty_line
+    - match: '{{name}}'
+      set: empty_line
+    - match: \S+
+      scope: invalid.illegal.fasmg
+      set: empty_line
+
+  label:
+    - match: '({{name}})[ \t]*(:)?[ \t]*'
+      captures:
+        1: entity.name.label.fasmg
+        2: punctuation.separator.fasmg
+      set: rvalue
+      # todo: handle "as"
+
+  logical_expression:
+    - match: '[~&|]'
+      scope: keyword.operator.logical.fasmg
+    - match: '[<>]?=?|<>'
+      scope: keyword.operator.comparison.fasmg
+    - match: \b(relativeto|eq(type)?)\b
+      scope: keyword.operator.comparison.fasmg
+    - match: \b(defined|definite|used)\b
+      scope: keyword.operator.word.fasmg
+    - include: rvalue
+
+#todo: <> for arguments with commas
