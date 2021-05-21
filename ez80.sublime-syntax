@@ -1,0 +1,14 @@
+%YAML 1.2
+---
+name: ez80
+file_extensions: [ez80]
+scope: source.ez80
+
+contexts:
+  prototype:
+    - match: ;
+      scope: punctuation.definition.comment.fasmg
+      set: fasmg.sublime-syntax#comment.line
+  main:
+    - include: fasmg.sublime-syntax#fasmg_keywords
+    - include: fasmg.sublime-syntax#fasmg_general

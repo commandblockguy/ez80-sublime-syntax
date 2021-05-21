@@ -16,6 +16,10 @@ contexts:
       set: comment.line
 
   main:
+    - include: fasmg_keywords
+    - include: fasmg_general
+
+  fasmg_keywords:
     - match: \?
       scope: punctuation.definition.variable.fasmg
       push: name
@@ -108,11 +112,12 @@ contexts:
     - match: include
       scope: keyword.control.import.fasmg
       push: rvalue
+
+  fasmg_general:
     - include: name
     - match: '{{identifier}}'
-      scope: temp # todo
       # todo: ? in front of a label / variable
-      push: rvalue    
+      push: rvalue
 
   empty_line:
     - match: \s*\n

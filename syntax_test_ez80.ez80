@@ -1,0 +1,816 @@
+; SYNTAX TEST "Packages/User/ez80-sublime-syntax/ez80.sublime-syntax"
+
+	nop
+	ex af,af'
+	djnz $42
+	jr $42
+	jr nz,$42
+	jr z,$42
+	jr nc,$42
+	jr c,$42
+
+	ld bc,$123456
+	ld de,$123456
+	ld hl,$123456
+	add hl,bc
+	add hl,de
+	add hl,hl
+
+	ld (bc),a
+	ld (de),a
+	ld ($123456),hl
+	ld ($123456),a
+	ld a,(bc)
+	ld a,(de)
+	ld hl,($123456)
+	ld a,($123456)
+
+	inc bc
+	inc de
+	inc hl
+	dec bc
+	dec de
+	dec hl
+
+	inc (hl)
+	inc a
+	inc b
+	inc c
+	inc d
+	inc e
+
+	dec (hl)
+	dec a
+	dec b
+	dec c
+	dec d
+	dec e
+
+	ld (hl),$10
+	ld a,$10
+	ld b,$10
+	ld c,$10
+	ld d,$10
+	ld e,$10
+
+	rlca
+	rrca
+	rla
+	rra
+	daa
+	cpl
+	scf
+	nzf
+	zf
+	ncf
+	cf
+
+	ret.s nz
+	ret.s z
+	ret.s nc
+	ret.s c
+	ret.l nz
+	ret.l z
+	ret.l nc
+	ret.l c
+
+	ret.s
+	ret.l
+
+	retn.s
+	retn.l
+	reti.s
+	reti.l
+
+	jp.s (hl)
+	jp.l (hl)
+
+	jp.s (ix)
+	jp.l (ix)
+
+	jp.s (iy)
+	jp.l (iy)
+
+	jp.sis nz,$1337
+	jp.sis z,$1337
+	jp.sis nc,$1337
+	jp.sis c,$1337
+	jp.sis po,$1337
+	jp.sis pe,$1337
+	jp.sis p,$1337
+	jp.sis m,$1337
+	jp.lis nz,$1337
+	jp.lis z,$1337
+	jp.lis nc,$1337
+	jp.lis c,$1337
+	jp.lis po,$1337
+	jp.lis pe,$1337
+	jp.lis p,$1337
+	jp.lis m,$1337
+	jp.sil nz,$123456
+	jp.sil z,$123456
+	jp.sil nc,$123456
+	jp.sil c,$123456
+	jp.sil po,$123456
+	jp.sil pe,$123456
+	jp.sil p,$123456
+	jp.sil m,$123456
+	jp.lil nz,$123456
+	jp.lil z,$123456
+	jp.lil nc,$123456
+	jp.lil c,$123456
+	jp.lil po,$123456
+	jp.lil pe,$123456
+	jp.lil p,$123456
+	jp.lil m,$123456
+
+	jp.sis $1337
+	jp.lis $1337
+	jp.sil $123456
+	jp.lil $123456
+
+	call.sis nz,$1337
+	call.sis z,$1337
+	call.sis nc,$1337
+	call.sis c,$1337
+	call.lis nz,$1337
+	call.lis z,$1337
+	call.lis nc,$1337
+	call.lis c,$1337
+	call.sil nz,$123456
+	call.sil z,$123456
+	call.sil nc,$123456
+	call.sil c,$123456
+	call.lil nz,$123456
+	call.lil z,$123456
+	call.lil nc,$123456
+	call.lil c,$123456
+
+	call.sis $1337
+	call.lis $1337
+	call.sil $123456
+	call.lil $123456
+
+	rst.sis $10
+	rst.lis $10
+	rst.sil $10
+	rst.lil $10
+
+	halt
+
+	ld b,(hl)
+	ld c,(hl)
+	ld d,(hl)
+	ld e,(hl)
+	ld h,(hl)
+	ld l,(hl)
+	ld a,(hl)
+
+	ld (hl),b
+	ld (hl),c
+	ld (hl),d
+	ld (hl),e
+	ld (hl),h
+	ld (hl),l
+	ld (hl),a
+
+	ld a,a
+	ld b,a
+	ld c,a
+	ld d,a
+	ld e,a
+	ld a,b
+	ld b,b
+	ld c,b
+	ld d,b
+	ld e,b
+	ld a,c
+	ld b,c
+	ld c,c
+	ld d,c
+	ld e,c
+	ld a,d
+	ld b,d
+	ld c,d
+	ld d,d
+	ld e,d
+	ld a,e
+	ld b,e
+	ld c,e
+	ld d,e
+	ld e,e
+
+	add a,(hl)
+	add a,a
+	add a,b
+	add a,c
+	add a,d
+	add a,e
+	adc a,(hl)
+	adc a,a
+	adc a,b
+	adc a,c
+	adc a,d
+	adc a,e
+	sub a,(hl)
+	sub a,a
+	sub a,b
+	sub a,c
+	sub a,d
+	sub a,e
+	sbc a,(hl)
+	sbc a,a
+	sbc a,b
+	sbc a,c
+	sbc a,d
+	sbc a,e
+	and a,(hl)
+	and a,a
+	and a,b
+	and a,c
+	and a,d
+	and a,e
+	xor a,(hl)
+	xor a,a
+	xor a,b
+	xor a,c
+	xor a,d
+	xor a,e
+	or a,(hl)
+	or a,a
+	or a,b
+	or a,c
+	or a,d
+	or a,e
+	cp a,(hl)
+	cp a,a
+	cp a,b
+	cp a,c
+	cp a,d
+	cp a,e
+
+	ret nz
+	ret z
+	ret nc
+	ret c
+
+	pop bc
+	pop de
+	pop hl
+	ret
+	exx
+	jp (hl)
+	ld sp,hl
+
+	jp nz,$123456
+	jp z,$123456
+	jp nc,$123456
+	jp c,$123456
+	jp po,$123456
+	jp pe,$123456
+	jp p,$123456
+	jp m,$123456
+
+	jp $123456
+	out ($10),a
+	in a,($10)
+	ex (sp),hl
+	ex de,hl
+	di
+	ei
+
+	call nz,$123456
+	call z,$123456
+	call nc,$123456
+	call c,$123456
+
+	push bc
+	push de
+	push hl
+	call $123456
+
+	add a,$10
+	adc a,$10
+	sub a,$10
+	sbc a,$10
+	and a,$10
+	xor a,$10
+	or a,$10
+	cp a,$10
+
+	rst $10
+
+	rlc (hl)
+	rlc a
+	rlc b
+	rlc c
+	rlc d
+	rlc e
+	rrc (hl)
+	rrc a
+	rrc b
+	rrc c
+	rrc d
+	rrc e
+	rl (hl)
+	rl a
+	rl b
+	rl c
+	rl d
+	rl e
+	rr (hl)
+	rr a
+	rr b
+	rr c
+	rr d
+	rr e
+	sla (hl)
+	sla a
+	sla b
+	sla c
+	sla d
+	sla e
+	sra (hl)
+	sra a
+	sra b
+	sra c
+	sra d
+	sra e
+	srl (hl)
+	srl a
+	srl b
+	srl c
+	srl d
+	srl e
+
+	bit 7,(hl)
+	bit 7,a
+	bit 7,b
+	bit 7,c
+	bit 7,d
+	bit 7,e
+
+	res 7,(hl)
+	res 7,a
+	res 7,b
+	res 7,c
+	res 7,d
+	res 7,e
+
+	set 7,(hl)
+	set 7,a
+	set 7,b
+	set 7,c
+	set 7,d
+	set 7,e
+
+	in0 ($10)
+	in0 a,($10)
+	in0 b,($10)
+	in0 c,($10)
+	in0 d,($10)
+	in0 e,($10)
+
+	ld iy,(hl)
+	out0 a,($10)
+	out0 b,($10)
+	out0 c,($10)
+	out0 d,($10)
+	out0 e,($10)
+
+	lea ix,ix+$42
+	lea bc,ix+$42
+	lea de,ix+$42
+	lea hl,ix+$42
+
+	lea iy,iy+$42
+	lea bc,iy+$42
+	lea de,iy+$42
+	lea hl,iy+$42
+
+	tst a,(hl)
+	tst a,a
+	tst a,b
+	tst a,c
+	tst a,d
+	tst a,e
+
+	ld (hl),iy
+
+	ld ix,(hl)
+	ld bc,(hl)
+	ld de,(hl)
+	ld hl,(hl)
+	ld (hl),ix
+	ld (hl),bc
+	ld (hl),de
+	ld (hl),hl
+
+	in (bc)
+	in a,(bc)
+	in b,(bc)
+	in c,(bc)
+	in d,(bc)
+	in e,(bc)
+
+	out (bc),a
+	out (bc),b
+	out (bc),c
+	out (bc),d
+	out (bc),e
+
+	sbc hl,bc
+	sbc hl,de
+	sbc hl,hl
+	adc hl,bc
+	adc hl,de
+	adc hl,hl
+
+	ld ($123456),bc
+	ld ($123456),de
+	ld ($123456),hl
+	ld bc,($123456)
+	ld de,($123456)
+	ld hl,($123456)
+
+	neg
+	mlt bc
+	mlt de
+	mlt hl
+	lea ix,iy+$42
+	tst a,$10
+	tstio $10
+
+	retn
+	reti
+	lea iy,ix+$42
+	pea ix+$42
+	ld mb,a
+	stmix
+
+	im 0
+	im 1
+	im 2
+	pea iy+$42
+	ld a,mb
+	slp
+	rsmix
+
+	ld i,a
+	ld r,a
+	ld a,i
+	ld a,r
+	rrd
+	rld
+
+	ldi
+	ldd
+	ldir
+	lddr
+
+	cpi
+	cpd
+	cpir
+	cpdr
+
+	inim
+	indm
+	inimr
+	indmr
+	ini
+	ind
+	inir
+	indr
+	inirx
+	indrx
+
+	otim
+	otdm
+	otimr
+	otdmr
+	outi
+	outd
+	otir
+	otdr
+	otirx
+	otdrx
+
+	ini2
+	ind2
+	ini2r
+	ind2r
+	outi2
+	outd2
+	oti2r
+	otd2r
+
+	ld i,hl
+	ld hl,i
+
+	rlc (ix+$42)
+	rrc (ix+$42)
+	rl (ix+$42)
+	rr (ix+$42)
+	sla (ix+$42)
+	sra (ix+$42)
+	srl (ix+$42)
+
+	bit 7,(ix+$42)
+
+	res 7,(ix+$42)
+
+	set 7,(ix+$42)
+
+	add ix,bc
+	add ix,de
+	add ix,hl
+	ld ix,$123456
+	ld iy,(ix+$42)
+
+	ld ($123456),ix
+	ld ix,($123456)
+
+	inc ix
+	dec ix
+
+	inc ixl
+	inc ixh
+	inc iyl
+	inc iyh
+	inc (ix+$42)
+
+	dec ixl
+	dec ixh
+	dec iyl
+	dec iyh
+	dec (ix+$42)
+
+	ld ixl,$10
+	ld ixh,$10
+	ld iyl,$10
+	ld iyh,$10
+	ld (ix+$42),$10
+	ld (ix+$42),iy
+
+	ld ix,(ix+$42)
+	ld bc,(ix+$42)
+	ld de,(ix+$42)
+	ld hl,(ix+$42)
+	ld (ix+$42),ix
+	ld (ix+$42),bc
+	ld (ix+$42),de
+	ld (ix+$42),hl
+
+	ld a,(ix+$42)
+	ld b,(ix+$42)
+	ld c,(ix+$42)
+	ld d,(ix+$42)
+	ld e,(ix+$42)
+	ld (ix+$42),a
+	ld (ix+$42),b
+	ld (ix+$42),c
+	ld (ix+$42),d
+	ld (ix+$42),e
+	ld a,ixl
+	ld b,ixl
+	ld c,ixl
+	ld d,ixl
+	ld e,ixl
+	ld a,ixh
+	ld b,ixh
+	ld c,ixh
+	ld d,ixh
+	ld e,ixh
+	ld a,iyl
+	ld b,iyl
+	ld c,iyl
+	ld d,iyl
+	ld e,iyl
+	ld a,iyh
+	ld b,iyh
+	ld c,iyh
+	ld d,iyh
+	ld e,iyh
+	ld ixl,a
+	ld ixl,b
+	ld ixl,c
+	ld ixl,d
+	ld ixl,e
+	ld ixh,a
+	ld ixh,b
+	ld ixh,c
+	ld ixh,d
+	ld ixh,e
+	ld iyl,a
+	ld iyl,b
+	ld iyl,c
+	ld iyl,d
+	ld iyl,e
+	ld iyh,a
+	ld iyh,b
+	ld iyh,c
+	ld iyh,d
+	ld iyh,e
+
+	add a,ixl
+	add a,ixh
+	add a,iyl
+	add a,iyh
+	add a,(ix+$42)
+	adc a,ixl
+	adc a,ixh
+	adc a,iyl
+	adc a,iyh
+	adc a,(ix+$42)
+	sub a,ixl
+	sub a,ixh
+	sub a,iyl
+	sub a,iyh
+	sub a,(ix+$42)
+	sbc a,ixl
+	sbc a,ixh
+	sbc a,iyl
+	sbc a,iyh
+	sbc a,(ix+$42)
+	and a,ixl
+	and a,ixh
+	and a,iyl
+	and a,iyh
+	and a,(ix+$42)
+	xor a,ixl
+	xor a,ixh
+	xor a,iyl
+	xor a,iyh
+	xor a,(ix+$42)
+	or a,ixl
+	or a,ixh
+	or a,iyl
+	or a,iyh
+	or a,(ix+$42)
+	cp a,ixl
+	cp a,ixh
+	cp a,iyl
+	cp a,iyh
+	cp a,(ix+$42)
+
+	pop ix
+	jp (ix)
+	ld sp,ix
+
+	ex (sp),ix
+
+	push ix
+
+	rlc (iy+$42)
+	rrc (iy+$42)
+	rl (iy+$42)
+	rr (iy+$42)
+	sla (iy+$42)
+	sra (iy+$42)
+	srl (iy+$42)
+
+	bit 7,(iy+$42)
+
+	res 7,(iy+$42)
+
+	set 7,(iy+$42)
+
+	add iy,bc
+	add iy,de
+	add iy,hl
+	ld iy,$123456
+	ld ix,(iy+$42)
+
+	ld ($123456),iy
+	ld iy,($123456)
+
+	inc iy
+	dec iy
+
+	inc ixl
+	inc ixh
+	inc iyl
+	inc iyh
+	inc (iy+$42)
+
+	dec ixl
+	dec ixh
+	dec iyl
+	dec iyh
+	dec (iy+$42)
+
+	ld ixl,$10
+	ld ixh,$10
+	ld iyl,$10
+	ld iyh,$10
+	ld (iy+$42),$10
+	ld (iy+$42),ix
+
+	ld iy,(iy+$42)
+	ld bc,(iy+$42)
+	ld de,(iy+$42)
+	ld hl,(iy+$42)
+	ld (iy+$42),iy
+	ld (iy+$42),bc
+	ld (iy+$42),de
+	ld (iy+$42),hl
+
+	ld a,(iy+$42)
+	ld b,(iy+$42)
+	ld c,(iy+$42)
+	ld d,(iy+$42)
+	ld e,(iy+$42)
+	ld (iy+$42),a
+	ld (iy+$42),b
+	ld (iy+$42),c
+	ld (iy+$42),d
+	ld (iy+$42),e
+	ld a,ixl
+	ld b,ixl
+	ld c,ixl
+	ld d,ixl
+	ld e,ixl
+	ld a,ixh
+	ld b,ixh
+	ld c,ixh
+	ld d,ixh
+	ld e,ixh
+	ld a,iyl
+	ld b,iyl
+	ld c,iyl
+	ld d,iyl
+	ld e,iyl
+	ld a,iyh
+	ld b,iyh
+	ld c,iyh
+	ld d,iyh
+	ld e,iyh
+	ld ixl,a
+	ld ixl,b
+	ld ixl,c
+	ld ixl,d
+	ld ixl,e
+	ld ixh,a
+	ld ixh,b
+	ld ixh,c
+	ld ixh,d
+	ld ixh,e
+	ld iyl,a
+	ld iyl,b
+	ld iyl,c
+	ld iyl,d
+	ld iyl,e
+	ld iyh,a
+	ld iyh,b
+	ld iyh,c
+	ld iyh,d
+	ld iyh,e
+
+	add a,ixl
+	add a,ixh
+	add a,iyl
+	add a,iyh
+	add a,(iy+$42)
+	adc a,ixl
+	adc a,ixh
+	adc a,iyl
+	adc a,iyh
+	adc a,(iy+$42)
+	sub a,ixl
+	sub a,ixh
+	sub a,iyl
+	sub a,iyh
+	sub a,(iy+$42)
+	sbc a,ixl
+	sbc a,ixh
+	sbc a,iyl
+	sbc a,iyh
+	sbc a,(iy+$42)
+	and a,ixl
+	and a,ixh
+	and a,iyl
+	and a,iyh
+	and a,(iy+$42)
+	xor a,ixl
+	xor a,ixh
+	xor a,iyl
+	xor a,iyh
+	xor a,(iy+$42)
+	or a,ixl
+	or a,ixh
+	or a,iyl
+	or a,iyh
+	or a,(iy+$42)
+	cp a,ixl
+	cp a,ixh
+	cp a,iyl
+	cp a,iyh
+	cp a,(iy+$42)
+
+	pop iy
+	jp (iy)
+	ld sp,iy
+
+	ex (sp),iy
+
+	push iy
