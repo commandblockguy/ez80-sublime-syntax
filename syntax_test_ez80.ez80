@@ -1,4 +1,4 @@
-; SYNTAX TEST "Packages/User/ez80-sublime-syntax/ez80.sublime-syntax"
+; SYNTAX TEST "Packages/ez80-sublime-syntax/ez80.sublime-syntax"
 
 	nop
 	ex af,af'

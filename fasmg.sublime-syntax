@@ -6,8 +6,10 @@ scope: source.fasmg
 
 variables:
   # a{0} since I'm too lazy to properly escape stuff
-  name: a{0}[^\+-\/\*=<>\(\)\[\]{}:\?!,\|&~`\\\s\d"'$][^\+-\/\*=<>\(\)\[\]{}:\?!,\|&~`\\\s]*\??
-  identifier: a{0}[^\+-\/\*=<>\(\)\[\]{}:\?!,.\|&~`\\\s\d"'$][^\+-\/\*=<>\(\)\[\]{}:\?!,.\|&~`\\\s]*
+  identifier_disallowed_chars: \+-\/\*=<>\(\)\[\]{}:\?!,\.\|&~#`\\\s
+  first_char_disallowed: \d"'${{identifier_disallowed_chars}}
+  ident_end: (?![^{{identifier_disallowed_chars}}])
+  identifier: (?:[^{{first_char_disallowed}}]|\.|#)(?:[^{{identifier_disallowed_chars}}]|\.|#|\?)*{{ident_end}}
 
 contexts:
   prototype:
@@ -23,100 +25,100 @@ contexts:
     - match: \?
       scope: punctuation.definition.variable.fasmg
       push: name
-    - match: end # todo: match name?
+    - match: end{{ident_end}} # todo: match name?
       scope: keyword.other.fasmg
       push: end
-    - match: if
+    - match: if{{ident_end}}
       scope: keyword.control.conditional.fasmg
       push: logical_expression
-    - match: else
+    - match: else{{ident_end}}
       scope: keyword.control.conditional.fasmg
-    - match: assert
+    - match: assert{{ident_end}}
       scope: keyword.other.fasmg
       push: logical_expression
-    - match: (macro)[ \t]+({{name}})?
+    - match: (macro)[ \t]+({{identifier}})?
       captures:
         1: keyword.declaration.macro.fasmg
         2: entity.name.macro.fasmg
       push: rvalue # todo: arguments
-    - match: (struc)[ \t]+({{name}})?
+    - match: (struc)[ \t]+({{identifier}})?
       captures:
         1: keyword.declaration.struct.fasmg
         2: entity.name.struct.fasmg
       push: rvalue # todo: arguments
-    - match: local
+    - match: local{{ident_end}}
       scope: storage.modifier.local.fasmg
       push: rvalue # todo: handle name list better
-    - match: esc
+    - match: esc{{ident_end}}
       scope: keyword.other.fasmg
-    - match: mvmacro|mvstruc
+    - match: mv(macro|struc){{ident_end}}
       scope: keyword.other.fasmg
       push: rvalue
-    - match: (namespace)[ \t]+({{name}})?
+    - match: (namespace)[ \t]+({{identifier}})?
       captures:
         1: keyword.declaration.namespace.fasmg
         2: entity.name.namespace.fasmg
       push: empty_line
-    - match: (restore)[ \t]+({{name}})?
+    - match: (restore)[ \t]+({{identifier}})?
       captures:
         1: keyword.other.fasmg
         2: variable.other.fasmg
       push: empty_line
-    - match: (purge|restruc)[ \t]+({{name}})?
+    - match: (purge|restruc)[ \t]+({{identifier}})?
       captures:
         1: keyword.other.fasmg
         2: variable.function.fasmg
       push: empty_line
-    - match: label
+    - match: label{{ident_end}}
       scope: keyword.declaration.label.fasmg
-      push: label
-    - match: '(element)[ \t]+({{name}})[ \t]*(:)?[ \t]*'
+      push: label_inst
+    - match: '(element)[ \t]+({{identifier}})[ \t]*(:)?[ \t]*'
       captures:
         1: keyword.declaration.variable.fasmg
         2: variable.other.fasmg
         3: punctuation.separator.fasmg
       set: rvalue
-    - match: '((re)?define)[ \t]+({{name}})?'
+    - match: '((?:re)?define)[ \t]+({{identifier}})?'
       captures:
         1: keyword.declaration.variable.fasmg
+        2: variable.other.fasmg
         3: variable.other.fasmg
       set: rvalue
-    - match: repeat|rept|iterate|irpv?
+    - match: (repeat|rept|iterate|irpv?){{ident_end}}
       scope: keyword.control.fasmg
       set: rvalue
-    - match: while
+    - match: while{{ident_end}}
       scope: keyword.control.fasmg
       push: logical_expression
-    - match: break|postpone
+    - match: (break|postpone){{ident_end}}
       scope: keyword.control.fasmg
       push: empty_line
-    - match: indx
+    - match: indx{{ident_end}}
       scope: keyword.control.fasmg
       push: rvalue
-    - match: outscope
+    - match: outscope{{ident_end}}
       scope: keyword.other.fasmg
-    - match: (r(aw)?)?match
+    - match: (r(aw)?)?match{{ident_end}}
       scope: keyword.control.conditional.fasmg
       push: rvalue
-    - match: org|section|restartout
+    - match: (org|section|restartout){{ident_end}}
       scope: keyword.other.fasmg
       push: rvalue
-    - match: (virtual)([ \t]+(at))?
+    - match: (virtual)(?:[ \t]+(at))?
       captures:
         1: keyword.control.fasmg
-        3: keyword.other.fasmg
+        2: keyword.other.fasmg
       push: rvalue
-    - match: load|store|eval|display|err|format|(retain|remove)comments|isolatelines
+    - match: (load|store|eval|display|err|format|(retain|remove)comments|isolatelines){{ident_end}}
       scope: keyword.other.fasmg
       push: rvalue
-    - match: include
+    - match: include{{ident_end}}
       scope: keyword.control.import.fasmg
       push: rvalue
 
   fasmg_general:
     - include: name
     - match: '{{identifier}}'
-      # todo: ? in front of a label / variable
       push: rvalue
 
   empty_line:
@@ -126,32 +128,32 @@ contexts:
       scope: invalid.illegal.fasmg
 
   name:
-    - match: '({{name}})\s*(=:?|(re)?equ)\s*'
+    - match: '({{identifier}})\s*(=:?|(re)?equ)\s*'
       captures:
         1: variable.other.fasmg
         2: keyword.operator.assignment.fasmg
       set: rvalue
-    - match: '({{name}})\s*(:=)\s*'
+    - match: '({{identifier}})\s*(:=)\s*'
       captures:
         1: variable.other.constant.fasmg
         2: keyword.operator.assignment.fasmg
       set: rvalue
-    - match: '({{name}})\s*(:{1,2})\s*'
+    - match: '({{identifier}})\s*(:{1,2})\s*'
       captures:
         1: entity.name.label.fasmg
         2: punctuation.separator.fasmg
       set: main
-    - match: '(({{name}})?[ \t]+)?([dr](d?q{1,2}|[bwdpt])|dbx)\b'
+    - match: '(({{identifier}})?[ \t]+)?([dr](d?q{1,2}|[bwdpt])|dbx)\b'
       captures:
         2: entity.name.label.fasmg
         3: storage.type.fasmg
       set: rvalue
-    - match: '({{name}})?[ \t]*(emit)'
+    - match: '({{identifier}})?[ \t]*(emit)'
       captures:
         1: entity.name.label.fasmg
         2: keyword.other.fasmg
       set: rvalue
-    - match: '({{name}})?[ \t]*(file)'
+    - match: '({{identifier}})?[ \t]*(file)'
       captures:
         1: entity.name.label.fasmg
         2: keyword.control.import.fasmg
@@ -161,21 +163,21 @@ contexts:
     # todo: calminstructions
 
   rvalue:
-    - match: \+|-|\*|/|mod
+    - match: \+|-|\*|/|mod{{ident_end}}
       scope: keyword.operator.arithmetic.fasmg
-    - match: xor|and|or|shl|shr|not|bsf|bsr
+    - match: (xor|and|or|shl|shr|not|bsf|bsr){{ident_end}}
       scope: keyword.operator.bitwise.fasmg
-    - match: (bswap|string|lengthof|sizeof|float|trunc|dup)|(elements?|scale|metadata)(of)?
+    - match: ((bswap|string|lengthof|sizeof|float|trunc|dup)|(elements?|scale|metadata)(of)?){{ident_end}}
       scope: keyword.operator.word.fasmg
-    - match: t?byte|d?q{0,2}[fptxyz]?word
+    - match: (t?byte|d?q{0,2}[fptxyz]?word){{ident_end}}
       scope: storage.type.fasmg
     - match: '%'
       scope: variable.parameter.fasmg
-    - match: __(time|file|line|source)__
+    - match: __(time|file|line|source)__{{ident_end}}
       scope: variable.language.fasmg
-    - match: from|at
+    - match: (from|at){{ident_end}}
       scope: keyword.other.fasmg
-    - match: '{{name}}'
+    - match: '{{identifier}}'
       scope: variable.other.fasmg
     - match: \'
       scope: punctuation.definition.string.begin.fasmg
@@ -183,6 +185,7 @@ contexts:
     - match: \"
       scope: punctuation.definition.string.begin.fasmg
       push: string.double
+      # todo: improve these
     - match: \d+(\.(\d+e)?|e)\d+f?
       scope: constant.numeric.float.decimal.fasmg
     - match: \b[01]+b\b
@@ -237,29 +240,29 @@ contexts:
       pop: true
 
   end:
-    - match: namespace
+    - match: namespace{{ident_end}}
       scope: keyword.declaration.namespace.fasmg
       set: empty_line
-    - match: if|(r(aw)?)?match
+    - match: (if|(r(aw)?)?match){{ident_end}}
       scope: keyword.control.conditional.fasmg
       set: empty_line
-    - match: macro
+    - match: macro{{ident_end}}
       scope: keyword.declaration.macro.fasmg
       set: empty_line
-    - match: struc
+    - match: struc{{ident_end}}
       scope: keyword.declaration.struct.fasmg
       set: empty_line
-    - match: repeat|rept|while|iterate|irpv?|postpone|virtual|calminstruction
+    - match: (repeat|rept|while|iterate|irpv?|postpone|virtual|calminstruction){{ident_end}}
       scope: keyword.control.fasmg
       set: empty_line
-    - match: '{{name}}'
+    - match: '{{identifier}}'
       set: empty_line
     - match: \S+
       scope: invalid.illegal.fasmg
       set: empty_line
 
-  label:
-    - match: '({{name}})[ \t]*(:)?[ \t]*'
+  label_inst:
+    - match: '({{identifier}})[ \t]*(:)?[ \t]*'
       captures:
         1: entity.name.label.fasmg
         2: punctuation.separator.fasmg

@@ -1,4 +1,4 @@
-; SYNTAX TEST "Packages/User/ez80-sublime-syntax/fasmg.sublime-syntax"
+; SYNTAX TEST "Packages/ez80-sublime-syntax/fasmg.sublime-syntax"
 
 variable = 1
 ; <- variable.other.fasmg
